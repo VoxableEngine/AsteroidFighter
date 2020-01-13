@@ -1,0 +1,37 @@
+<elements>
+    <element type="BorderImage" >
+        <attribute name="Texture" value="Texture2D;Textures/UI_new2.png" />
+        <attribute name="Blend Mode" value="alpha" />
+    </element>
+    <element type="Button" style="BorderImage">
+        <attribute name="Image Rect" value="94 141 95 142" />
+        <attribute name="Border" value="0 0 0 0" />
+        <attribute name="Pressed Image Offset" value="0 32" />
+        <attribute name="Hover Image Offset" value="27 0" />
+        <attribute name="Pressed Child Offset" value="-1 3" />
+    </element>
+    <element type="BackgroundPanel" style="BorderImage">
+        <attribute name="Image Rect" value="94 141 95 142" />
+        <attribute name="Border" value="0 0 0 0" />
+    </element>
+    <element type="WindowPanel" style="BorderImage">
+        <attribute name="Image Rect" value="140 210 142 212" />
+        <attribute name="Border" value="0 0 0 0" />
+    </element>
+    <element type="TitleText" style="Text">
+        <attribute name="Font" value="Font;Fonts/Kenney Blocks.ttf" />
+        <attribute name="Font Size" value="72" />
+        <attribute name="Color" value="0.95 0.95 0.95" />
+        <!-- <attribute name="Text Effect" value="Stroke" /> -->
+        <!-- <attribute name="Stroke Thickness" value="4" /> -->
+        <!-- <attribute name="Effect Color" value="0.51 0.51 0.51 1" /> -->
+    </element>
+    <element type="Text">
+        <attribute name="Font" value="Font;Fonts/Kenney Blocks.ttf" />
+        <attribute name="Font Size" value="16" />
+        <attribute name="Color" value="0.95 0.95 0.95" />
+        <attribute name="Text Effect" value="Stroke" />
+        <attribute name="Stroke Thickness" value="4" />
+        <attribute name="Effect Color" value="0.51 0.51 0.51 1" />
+    </element>
+</elements>
