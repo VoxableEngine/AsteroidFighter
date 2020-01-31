@@ -21,7 +21,7 @@
     <element type="TitleText" style="Text">
         <attribute name="Font" value="Font;Fonts/Kenney Blocks.ttf" />
         <attribute name="Font Size" value="72" />
-        <attribute name="Color" value="0.95 0.95 0.95" />
+        <attribute name="Color" value="0.95 0.95 0.95 0.5" />
         <!-- <attribute name="Text Effect" value="Stroke" /> -->
         <!-- <attribute name="Stroke Thickness" value="4" /> -->
         <!-- <attribute name="Effect Color" value="0.51 0.51 0.51 1" /> -->

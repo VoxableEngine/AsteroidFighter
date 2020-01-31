@@ -1,20 +1,20 @@
 <?xml version="1.0"?>
 <material>
-	<technique name="Techniques/NoTexture.xml" quality="0" loddistance="0" />
+	<technique name="Techniques/NeonLines.xml" quality="0" loddistance="0" />
 	<parameter name="UOffset" value="1 0 0 0" />
 	<parameter name="VOffset" value="0 1 0 0" />
-	<parameter name="MatDiffColor" value="0.1 1.0 0.1 1" />
-	<parameter name="MatEmissiveColor" value="0.1 1.0 0.1" />
+	<parameter name="MatDiffColor" value="0.0 1 0.0 1" />
+	<parameter name="MatEmissiveColor" value="0.0 0.5 0.0" />
 	<parameter name="MatEnvMapColor" value="1 1 1" />
-	<parameter name="MatSpecColor" value="1.01 1.01 0.99 16.8" />
-	<parameter name="Roughness" value="0.5" />
+	<parameter name="MatSpecColor" value="0.61 0.91 0.6 256.8" />
+	<parameter name="Roughness" value="0.1" />
 	<parameter name="Metallic" value="0" />
 	<cull value="ccw" />
 	<shadowcull value="ccw" />
-	<fill value="solid" />
+	<fill value="Wireframe" />
 	<depthbias constant="0" slopescaled="0" />
 	<alphatocoverage enable="false" />
-	<lineantialias enable="false" />
+	<lineantialias enable="true" />
 	<renderorder value="128" />
 	<occlusion enable="true" />
 </material>

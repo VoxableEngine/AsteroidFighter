@@ -1,0 +1,6 @@
+<renderpath>
+    <rendertarget name="scat" tag="VolumeScatter" sizedivisor="4 4" format="rgb" filter="true" />
+    <command type="quad" tag="VolumeScatter" vs="VolumeScatter" ps="VolumeScatter" psdefines="TEST" output="viewport">
+        <texture unit="diffuse" name="viewport" />
+    </command>
+</renderpath>
