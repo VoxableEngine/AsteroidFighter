@@ -4,6 +4,16 @@ local StateManager = require("CoreLib.State.StateManager")
 scene_ = nil
 cameraNode_ = nil
 camera_ = nil
+drawDebug_ = false
+
+categories_ = {
+    BOUNDARY            = 1,
+    ASTEROID            = 2,
+    FRIENDLY_SHIP       = 4,
+    ENEMY_SHIP          = 8,
+    FRIENDLY_PROJECTILE = 16,
+    ENEMY_PROJECTILE    = 32
+}
 
 function Start()
 
@@ -19,7 +29,7 @@ function Start()
     camera_ = cameraNode_:CreateComponent("Camera")
     --camera_.orthographic = true
     --camera_.orthoSize = graphics.height * PIXEL_SIZE
-    camera_.zoom = 1.2 * Min(graphics.width / 1280, graphics.height / 800) -- Set zoom according to user's resolution to ensure full visibility (initial zoom (1.2) is set for full visibility at 1280x800 resolution)
+    camera_.zoom = 1 * Min(graphics.width / 1280, graphics.height / 800) -- Set zoom according to user's resolution to ensure full visibility (initial zoom (1.2) is set for full visibility at 1280x800 resolution)
     --camera.farClip = 750.0
 
     -- Set an initial position for the camera scene node above the floor
@@ -31,8 +41,8 @@ function Start()
     zone.boundingBox = BoundingBox(-250.0, 250.0)
     zone.ambientColor = Color(0.001, 0.001, 0.001)
     zone.fogColor = Color(0.01, 0.01, 0.01)
-    zone.fogStart = 5.0
-    zone.fogEnd = 40.0
+    zone.fogStart = 1.0
+    zone.fogEnd = 80.0
 
     local viewport = Viewport:new(scene_, cameraNode_:GetComponent("Camera"))
     renderer:SetViewport(0, viewport)
@@ -43,6 +53,9 @@ function Start()
     --engine:CreateDebugHud()
     --local uiStyle = cache:GetResource("XMLFile", "UI/Styles.xml")
     --debugHud.defaultStyle = uiStyle
+    local world = scene_:CreateComponent("PhysicsWorld2D")
+    world:SetGravity(Vector2(0, 0))
+    world:SetDrawShape(true)
     scene_:CreateComponent("DebugRenderer")
 
     -- local effectRenderPath = viewport:GetRenderPath():Clone()

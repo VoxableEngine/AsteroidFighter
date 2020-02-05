@@ -8,9 +8,14 @@ function Arena:Start()
     arenaModel.lightMask = 2
 
     arenaModel.model = cache:GetResource("Model", "Models/Plane.mdl")
-    arenaModel.material = cache:GetResource("Material", "Materials/DefaultGrey.xml")
+    arenaModel.material = cache:GetResource("Material", "Materials/StarField.xml")
     --arenaModel.material = cache:GetResource("Material", "Materials/Green.xml")
 end
 
+function Arena:Update(timeStep)
+    local camPos = cameraNode_.position
+    local arenaPos = self.node.position
+    self.node.position = Vector3(camPos.x, camPos.y, arenaPos.z)
+end
 
 return Arena
