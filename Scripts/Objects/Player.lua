@@ -20,17 +20,21 @@ local collisionMask_ = bit.bor(
 
 function Player:HandleMouseButtonDown(eventType, eventData)
     local node = self.node
-    self.direction = node.rotation:RollAngle()+270
-    --print(self == nil)
+
+    if gamePaused_ == true then
+        return
+    end
+
     local laserNode = scene_:CreateChild("Laser")
+
+    self.direction = node.rotation:RollAngle()+270
 
     laserNode.position = node.position
     laserNode.rotation = Quaternion(0, 0, self.direction)
     laserNode.scale = Vector3(0.15, 0.15, 0.15)
 
-    --laserNode:Translate(Vector3(0.0, 0.0, 1.0) * 0.30, TS_LOCAL)
+    -- apply a slight offset so lasers are emitted from the end of player triangle model
     laserNode:Translate( (node.rotation*Vector3(0.0, -1.0, 0.0)) * 0.3, TS_WORLD)
-
     laserNode:CreateScriptObject("Laser")
 
     local sound = cache:GetResource("Sound", "Sounds/Laser.wav")
@@ -96,6 +100,7 @@ function Player:Start()
     shape.restitution = 0.1
     shape:SetCategoryBits(categories_.FRIENDLY_SHIP)
     shape:SetMaskBits(collisionMask_)
+    node:AddTag("Player")
 
     self:SubscribeToEvent("MouseButtonDown", "Player:HandleMouseButtonDown")
 end
@@ -151,29 +156,33 @@ function Player:Update(timeStep)
         self.engineSoundSource:Stop()
     end
 
-    local camPos = cameraNode_.position
-    local playerPos = node.position
-
-    cameraNode_:Translate(Vector3((playerPos.x-camPos.x)*0.01, (playerPos.y-camPos.y)*0.01, 0), TS_WORLD)
-
+    local localCam = cameraNode_:GetScriptObject()
     local mpos = input:GetMousePosition()
-    local np = node.position
+    node.rotation = localCam:GetCrosshairRotation(mpos.x, mpos.y)
 
-    local x = mpos.x / graphics.width
-    local y = mpos.y / graphics.height
-    local cameraRay = camera_:GetScreenRay(x, y);
-    local dist = cameraRay:HitDistance(Plane(Vector3.FORWARD, Vector3.ZERO));
-    local wp = cameraRay.origin + cameraRay.direction * dist;
+    -- local camPos = cameraNode_.position
+    -- local playerPos = node.position
 
-    wp.x = (np.x-wp.x)
-    wp.y = (np.y-wp.y)
+    -- cameraNode_:Translate(Vector3((playerPos.x-camPos.x)*0.01, (playerPos.y-camPos.y)*0.01, 0), TS_WORLD)
 
-    --hudText_.text = "\ngw = " .. graphics.width .. ", gh = " .. graphics.height ..
-    --    "\nmp: x = " .. mpos.x .. ", y = " .. mpos.y ..
-    --    "\nwp: x = " .. wp.x .. ", y = " .. wp.y .. ", z = " .. wp.z ..
-    --    "\nnp: x = " .. np.x .. ", y = " .. np.y .. ", z = " .. np.z
+    -- local mpos = input:GetMousePosition()
+    -- local np = node.position
 
-    node.rotation = Quaternion(0, 0, -Atan2(wp.x, wp.y))
+    -- local x = mpos.x / graphics.width
+    -- local y = mpos.y / graphics.height
+    -- local cameraRay = camera_:GetScreenRay(x, y);
+    -- local dist = cameraRay:HitDistance(Plane(Vector3.FORWARD, Vector3.ZERO));
+    -- local wp = cameraRay.origin + cameraRay.direction * dist;
+
+    -- wp.x = (np.x-wp.x)
+    -- wp.y = (np.y-wp.y)
+
+    -- --hudText_.text = "\ngw = " .. graphics.width .. ", gh = " .. graphics.height ..
+    -- --    "\nmp: x = " .. mpos.x .. ", y = " .. mpos.y ..
+    -- --    "\nwp: x = " .. wp.x .. ", y = " .. wp.y .. ", z = " .. wp.z ..
+    -- --    "\nnp: x = " .. np.x .. ", y = " .. np.y .. ", z = " .. np.z
+
+    -- node.rotation = Quaternion(0, 0, -Atan2(wp.x, wp.y))
 end
 
 return Player

@@ -1,10 +1,8 @@
 
-local StateManager = require("CoreLib.State.StateManager")
-
 scene_ = nil
 cameraNode_ = nil
-camera_ = nil
 drawDebug_ = false
+gamePaused_ = false
 
 categories_ = {
     BOUNDARY            = 1,
@@ -15,25 +13,26 @@ categories_ = {
     ENEMY_PROJECTILE    = 32
 }
 
+MIN_ASTEROIDS = 8
+ARENA_SIZE = 20
+
+--local SceneManager = require("CoreLib.Scene.SceneManager")
+local StateManager = require("CoreLib.State.StateManager")
+
+--local AsteroidGenerator = require("Utils.AsteroidGenerator")
+local LocalCamera = require("Objects.LocalCamera")
+
 function Start()
 
     scene_ = Scene()
-
     scene_:CreateComponent("Octree")
 
-    -- -- Create the camera. Set far clip to match the fog. Note: now we actually create the camera node outside
-    -- -- the scene, because we want it to be unaffected by scene load / save
-    cameraNode_ = Node()
-    cameraNode_.position = Vector3(0.0, 0.0, -10.0)
-    cameraNode_:LookAt(Vector3(0.0, 0.0, 0.0))
-    camera_ = cameraNode_:CreateComponent("Camera")
-    --camera_.orthographic = true
-    --camera_.orthoSize = graphics.height * PIXEL_SIZE
-    camera_.zoom = 1 * Min(graphics.width / 1280, graphics.height / 800) -- Set zoom according to user's resolution to ensure full visibility (initial zoom (1.2) is set for full visibility at 1280x800 resolution)
-    --camera.farClip = 750.0
+    -- -- Create the camera. Set far clip to match the fog.
+    cameraNode_ = scene_:CreateChild("LocalCamera") --Node()
 
-    -- Set an initial position for the camera scene node above the floor
-    --cameraNode_.position = Vector3(0.0, 0.0, 0.0)
+    -- Create LocalCamera script object to manage the player's local camera
+    local localCam = cameraNode_:CreateScriptObject("LocalCamera")
+    localCam:DefaultPosition()
 
     -- Create a Zone for ambient light & fog control
     local zoneNode = scene_:CreateChild("Zone")
@@ -44,8 +43,25 @@ function Start()
     zone.fogStart = 1.0
     zone.fogEnd = 80.0
 
+    --renderer.numViewports = 2
+
     local viewport = Viewport:new(scene_, cameraNode_:GetComponent("Camera"))
     renderer:SetViewport(0, viewport)
+
+    -- Set up the rear camera viewport on top of the front view ("rear view mirror")
+    -- The viewport index must be greater in that case, otherwise the view would be left behind
+    --local radarViewport = Viewport:new(scene_, radar_,
+    --    IntRect(graphics.width * 2 / 3, graphics.height-graphics.height/3, graphics.width - 32, graphics.height))
+    --renderer:SetViewport(1, radarViewport)
+
+    local world = scene_:CreateComponent("PhysicsWorld2D")
+    world:SetGravity(Vector2(0, 0))
+    world:SetDrawShape(true)
+    scene_:CreateComponent("DebugRenderer")
+
+    -- Set style to the UI root so that elements will inherit it
+    local uiStyle = cache:GetResource("XMLFile", "UI/BaseStyle.xml")
+    ui.root.defaultStyle = uiStyle
 
     StateManager:Init()
     StateManager:ShowState("MainMenu")
@@ -53,10 +69,6 @@ function Start()
     --engine:CreateDebugHud()
     --local uiStyle = cache:GetResource("XMLFile", "UI/Styles.xml")
     --debugHud.defaultStyle = uiStyle
-    local world = scene_:CreateComponent("PhysicsWorld2D")
-    world:SetGravity(Vector2(0, 0))
-    world:SetDrawShape(true)
-    scene_:CreateComponent("DebugRenderer")
 
     -- local effectRenderPath = viewport:GetRenderPath():Clone()
     -- effectRenderPath:Append(cache:GetResource("XMLFile", "PostProcess/VolumeScatter.xml"))

@@ -1,20 +1,20 @@
 <?xml version="1.0"?>
-<element type="BorderImage" style="BackgroundPanel">
+<element type="BorderImage">
   <attribute name="Size" value="800 600" />
 	<attribute name="Max Anchor" value="1 1" />
 	<attribute name="Min Offset" value="0 0" />
 	<attribute name="Max Offset" value="0 0" />
 	<attribute name="Pivot" value="0 0" />
 	<attribute name="Enable Anchor" value="true" />
-	<element type="BorderImage" style="BackgroundPanel">
+	<element type="BorderImage" style="VPanel">
     <attribute name="Name" value="MainMenuList" />
     <attribute name="Min Anchor" value="0.5 0.5" />
     <attribute name="Max Anchor" value="0.5 0.5" />
     <attribute name="Pivot" value="0.5 0.5" />
     <attribute name="Layout Mode" value="Vertical" />
-    <element type="Text" style="TitleText">
-      <attribute name="Text" value="Asteroid Fighter" />
+    <element type="UIElement">
       <attribute name="Max Size" value="2147483647 80" />
+      <attribute name="Min Size" value="400 200" />
       <attribute name="Min Anchor" value="0.5 0.5" />
       <attribute name="Max Anchor" value="0.5 0.5" />
       <attribute name="Pivot" value="0.5 0.5" />
@@ -24,7 +24,9 @@
     <element type="Button">
       <attribute name="Name" value="StartButton" />
       <attribute name="Min Size" value="50 80" />
+      <attribute name="Max Size" value="250 80" />
       <attribute name="Vert Alignment" value="Top" />
+      <attribute name="Horiz Alignment" value="Center" />
       <element type="Text">
         <attribute name="Min Anchor" value="0.5 0.5" />
         <attribute name="Max Anchor" value="0.5 0.5" />
@@ -34,21 +36,25 @@
       </element>
     </element>
     <element type="Button">
-      <attribute name="Name" value="NetworkButton" />
+      <attribute name="Name" value="JoinButton" />
       <attribute name="Min Size" value="50 80" />
+      <attribute name="Max Size" value="250 80" />
       <attribute name="Vert Alignment" value="Top" />
+      <attribute name="Horiz Alignment" value="Center" />
       <element type="Text">
         <attribute name="Min Anchor" value="0.5 0.5" />
         <attribute name="Max Anchor" value="0.5 0.5" />
         <attribute name="Pivot" value="0.5 0.5" />
         <attribute name="Enable Anchor" value="true" />
-        <attribute name="Text" value="Network" />
+        <attribute name="Text" value="Join" />
       </element>
     </element>
     <element type="Button">
       <attribute name="Name" value="OptionsButton" />
       <attribute name="Min Size" value="50 80" />
+      <attribute name="Max Size" value="250 80" />
       <attribute name="Vert Alignment" value="Top" />
+      <attribute name="Horiz Alignment" value="Center" />
       <element type="Text">
         <attribute name="Min Anchor" value="0.5 0.5" />
         <attribute name="Max Anchor" value="0.5 0.5" />
@@ -60,7 +66,9 @@
     <element type="Button">
       <attribute name="Name" value="ExitButton" />
       <attribute name="Min Size" value="50 80" />
+      <attribute name="Max Size" value="250 80" />
       <attribute name="Vert Alignment" value="Top" />
+      <attribute name="Horiz Alignment" value="Center" />
       <element type="Text">
         <attribute name="Min Anchor" value="0.5 0.5" />
         <attribute name="Max Anchor" value="0.5 0.5" />
