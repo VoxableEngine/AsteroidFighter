@@ -16,70 +16,65 @@ local collisionMask_ = bit.bor(
 )
 
 function AsteroidShard:HandlePostRenderUpdate(eventType, eventData)
-    local debug = scene_:GetComponent("DebugRenderer")
-
-    -- for index,vertex in ipairs(self.node.vertices) do
-    --     debug:AddSphere(Sphere(self.node.rotation*(self.node.position+vertex), 0.03125), Color(1, 0, 0), false)
-    -- end
-
-    -- for index,tri in ipairs(self.node.triangles) do
-    --     debug:AddLine(self.node.position+tri.a, self.node.position+tri.b, Color(1, 1, 0), false)
-    --     debug:AddLine(self.node.position+tri.b, self.node.position+tri.c, Color(1, 1, 0), false)
-    --     debug:AddLine(self.node.position+tri.c, self.node.position+tri.a, Color(1, 1, 0), false)
-    -- end
+    --local debug = scene_:GetComponent("DebugRenderer")
 end
 
 function AsteroidShard:Start()
+
     local node = self.node
-    local model = AsteroidModel.Create({ vertices=node.vertices, triangles=node.triangles })
+    local asteroidRoot = scene_:GetChild("AsteroidRoot", true)
+    local generator = asteroidRoot:GetScriptObject()
+    local asteroidSet = generator.asteroidSet
+
+    self.asteroidIndex = node.asteroidIndex
+    self.shardIndex = node.shardIndex
+
+    --local model = asteroidSet:GetShardModel(self.asteroidIndex, self.shardIndex)
+
     local modelNode = node:CreateChild("ModelNode")
     local staticModel = modelNode:CreateComponent("StaticModel")
-    staticModel.model = model
-    staticModel.material = cache:GetResource("Material", "Materials/Asteroid.xml")
+    staticModel.model = asteroidSet:GetShardModel(self.asteroidIndex, self.shardIndex)
+    staticModel.material = cache:GetResource("Material", "Materials/Stone.xml")
 
     node:AddTag("Asteroid")
 
     local body = node:CreateComponent("RigidBody2D")
     body.bodyType = BT_DYNAMIC
 
-    local triangle = node.triangles[1]
+    local shard = asteroidSet:GetShardData(self.asteroidIndex, self.shardIndex)
     local shape = node:CreateComponent("CollisionPolygon2D")
     shape:SetVertexCount(3)
-    shape:SetVertex(0, Vector2(triangle.a.x, triangle.a.y))
-    shape:SetVertex(1, Vector2(triangle.b.x, triangle.b.y))
-    shape:SetVertex(2, Vector2(triangle.c.x, triangle.c.y))
+    shape:SetVertex(0, Vector2(shard.a.x, shard.a.y))
+    shape:SetVertex(1, Vector2(shard.b.x, shard.b.y))
+    shape:SetVertex(2, Vector2(shard.c.x, shard.c.y))
     shape.density = 2.0
     shape.friction = 0.5
     shape.restitution = 0.1
     shape:SetCategoryBits(collisionCategory_)
     shape:SetMaskBits(collisionMask_)
 
-    self:SubscribeToEvent("PostRenderUpdate", "AsteroidShard:HandlePostRenderUpdate")
-    self:SubscribeToEvent(self.node, "NodeBeginContact2D", "AsteroidShard:HandleCollisionBegin")
+    --self:SubscribeToEvent("PostRenderUpdate", "AsteroidShard:HandlePostRenderUpdate")
+    self:SubscribeToEvent(node, "NodeBeginContact2D", "AsteroidShard:HandleCollisionBegin")
 end
 
 function AsteroidShard:HandleCollisionBegin(eventType, eventData)
+
+
     local laserNode = eventData["OtherNode"]:GetPtr("Node")
+
     if laserNode:HasTag("Laser") == false then return end
 
-    local contactBuffer = eventData["Contacts"]:GetBuffer()
-
-    local contacts = {}
-    while not contactBuffer.eof do
-        local contact = {}
-        contact.position = contactBuffer:ReadVector2() -- position
-        contact.normal = contactBuffer:ReadVector2() -- normal
-        contact.seperation = contactBuffer:ReadFloat() -- seperation (negative overlap distance)
-        table.insert(contacts, contact)
-    end
-
     local node = self.node
-    node:RemoveComponents("CollisionPolygon2D")
+    -- local contacts = {}
+    -- local contactBuffer = eventData["Contacts"]:GetBuffer()
 
-    -- local world = scene_:GetComponent("PhysicsWorld2D")
-    -- Explosion2D.Impulse(world, "Asteroid", contacts[1].position, 1.25, 5, 30, false)
-
-    --remove shard node
+    -- while not contactBuffer.eof do
+    --     local contact = {}
+    --     contact.position = contactBuffer:ReadVector2() -- position
+    --     contact.normal = contactBuffer:ReadVector2() -- normal
+    --     contact.seperation = contactBuffer:ReadFloat() -- seperation (negative overlap distance)
+    --     table.insert(contacts, contact)
+    -- end
     node:Remove()
 end
 

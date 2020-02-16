@@ -20,7 +20,10 @@ function AsteroidModel.Create(meshData)
         vertexData[lastVertex+4] = Random(-0.5, 0)
         vertexData[lastVertex+5] = -1
 
-        lastVertex = lastVertex + 6
+        vertexData[lastVertex+6] = vertex.x
+        vertexData[lastVertex+7] = vertex.y
+
+        lastVertex = lastVertex + 8
     end
 
     local indexData = {}
@@ -49,12 +52,13 @@ function AsteroidModel.Create(meshData)
     -- defining the vertex elements explicitly to allow any element types and order
     local elements = {
         VertexElement(TYPE_VECTOR3, SEM_POSITION),
-        VertexElement(TYPE_VECTOR3, SEM_NORMAL)
+        VertexElement(TYPE_VECTOR3, SEM_NORMAL),
+        VertexElement(TYPE_VECTOR2, SEM_TEXCOORD)
     }
     vb:SetSize(numVertices, elements)
 
     local temp = VectorBuffer()
-    for i = 1, numVertices * 6 do
+    for i = 1, numVertices * 8 do
         temp:WriteFloat(vertexData[i])
     end
     vb:SetData(temp)

@@ -45,37 +45,37 @@ function Game:Start()
     SetRandomSeed(time:GetSystemTime())
 
     local lightNode = scene_:CreateChild("MainLight")
+    self:AddObject("MainLight", lightNode)
+
     local light = lightNode:CreateComponent("Light")
     light.lightType = LIGHT_DIRECTIONAL
     light.range = 10.0
     light.color = Color(1.0, 1.0, 1.0)
     light.rotation = Quaternion(21, 59, 2)
     light.lightMask = 1
-    self:AddObject("MainLight", lightNode)
 
     local arenaNode = scene_:CreateChild("Arena")
-    arenaNode.position = Vector3(0, 0, 0.2)
-    arenaNode.scale = Vector3(20, 1, 20)
-    arenaNode:CreateScriptObject("Arena")
-    arenaNode.rotation = Quaternion(270, 0, 0)
     self:AddObject("Arena", arenaNode)
+    arenaNode:CreateScriptObject("Arena")
 
     local playerNode = scene_:CreateChild("Player")
+    self:AddObject("Player", playerNode)
     playerNode.position = Vector3(0, 0, 0)
     playerNode:CreateScriptObject("Player")
-    self:AddObject("Player", playerNode)
 
     local musicSource = scene_:CreateComponent("SoundSource")
-    musicSource.soundType = SOUND_MUSIC
     self:AddObject("MusicSource", musicSource)
+    musicSource.soundType = SOUND_MUSIC
 
     local music = cache:GetResource("Sound", "Music/Backbeat.ogg")
     music.looped = true
     musicSource:Play(music)
 
     local asteroidRoot = scene_:CreateChild("AsteroidRoot")
-    asteroidRoot:CreateScriptObject("AsteroidGenerator")
     self:AddObject("AsteroidRoot", asteroidRoot)
+
+    local generator = asteroidRoot:CreateScriptObject("AsteroidGenerator")
+    generator:GenerateSets()
 
     local localCam = cameraNode_:GetScriptObject()
     localCam:FollowNode(playerNode)

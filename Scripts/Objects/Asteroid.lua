@@ -17,6 +17,8 @@ local collisionMask_ = bit.bor(
     categories_.ENEMY_PROJECTILE
 )
 
+local IMPULSE_MAX = 8
+
 function Asteroid:HandlePostRenderUpdate(eventType, eventData)
     local debug = scene_:GetComponent("DebugRenderer")
 
@@ -33,25 +35,39 @@ end
 
 function Asteroid:Start()
 
+    local node = self.node
     local asteroidRoot = scene_:GetChild("AsteroidRoot", true)
     local generator = asteroidRoot:GetScriptObject()
-    self.mesh = generator:Generate()
+    local asteroidSet = generator.asteroidSet
 
-    local model = AsteroidModel.Create(self.mesh)
+    node.position = Vector3(
+        Random(-(ARENA_SIZE*0.5), ARENA_SIZE*0.5),
+        Random(-(ARENA_SIZE*0.5), ARENA_SIZE*0.5),
+        0
+    )
+    local impulse = Vector3(
+        Random(-(IMPULSE_MAX*0.5), IMPULSE_MAX*0.5),
+        Random(-(IMPULSE_MAX*0.5), IMPULSE_MAX*0.5),
+        0
+    )
+    local angularImpulse = Random(-IMPULSE_MAX*0.5, IMPULSE_MAX*0.5)
 
-    local node = self.node
+    self.asteroidIndex = asteroidSet:GetRandomIndex()
+    self.asteroid = asteroidSet:GetAsteroidData(self.asteroidIndex)
+    print("asteroidIndex: "..tostring(self.asteroidIndex))
+    local model = asteroidSet:GetWholeModel(self.asteroidIndex)
+
     local modelNode = node:CreateChild("ModelNode")
-
     local staticModel = modelNode:CreateComponent("StaticModel")
     staticModel.model = model
-    staticModel.material = cache:GetResource("Material", "Materials/Asteroid.xml")
+    staticModel.material = cache:GetResource("Material", "Materials/Stone.xml")
 
     node:AddTag("Asteroid")
 
     local body = node:CreateComponent("RigidBody2D")
     body.bodyType = BT_DYNAMIC
 
-    for tIndex, tri in ipairs(self.mesh.triangles) do
+    for tIndex, tri in ipairs(self.asteroid.data.triangles) do
         local shape = node:CreateComponent("CollisionPolygon2D")
         shape:SetVertexCount(3)
         shape:SetVertex(0, Vector2(tri.a.x, tri.a.y))
@@ -64,11 +80,11 @@ function Asteroid:Start()
         shape:SetMaskBits(collisionMask_)
     end
 
-    body:ApplyLinearImpulseToCenter(self.node.impulse, true)
-    body:ApplyAngularImpulse(self.node.angularImpulse, true)
+    body:ApplyLinearImpulseToCenter(impulse, true)
+    body:ApplyAngularImpulse(angularImpulse, true)
 
     self:SubscribeToEvent("PostRenderUpdate", "Asteroid:HandlePostRenderUpdate")
-    self:SubscribeToEvent(self.node, "NodeBeginContact2D", "Asteroid:HandleCollisionBegin")
+    self:SubscribeToEvent(node, "NodeBeginContact2D", "Asteroid:HandleCollisionBegin")
 end
 
 function Asteroid:DoLaserCollision(laserNode, contacts)
@@ -80,12 +96,11 @@ function Asteroid:DoAsteroidCollision(otherNode, contacts)
 end
 
 function Asteroid:HandleCollisionBegin(eventType, eventData)
+
     local otherNode = eventData["OtherNode"]:GetPtr("Node")
     local contactBuffer = eventData["Contacts"]:GetBuffer()
 
-    if otherNode.name ~= "Laser" then
-        return
-    end
+    if otherNode.name ~= "Laser" then return end
 
     local contacts = {}
     while not contactBuffer.eof do
@@ -108,17 +123,15 @@ function Asteroid:HandleCollisionBegin(eventType, eventData)
     local asteroidRoot = scene_:GetChild("AsteroidRoot", true)
 
     -- Create free floating asteroid shards
-    for tIndex, tri in ipairs(self.mesh.triangles) do
-        local shardNode = asteroidRoot:CreateChild("AsteroidShard")
+    for tIndex, tri in ipairs(self.asteroid.data.triangles) do
 
-        local newTri = Triangle(tri.a, 1, tri.b, 2, tri.c, 3)
+        local shardNode = asteroidRoot:CreateChild("AsteroidShard")
         shardNode.position = node.position
         shardNode.rotation = node.rotation
-        shardNode.vertices = { newTri.a, newTri.b, newTri.c }
-        shardNode.triangles = { newTri }
+        shardNode.asteroidIndex = self.asteroidIndex
+        shardNode.shardIndex = tIndex
         shardNode:CreateScriptObject("AsteroidShard")
     end
-
     node:Remove()
 end
 
